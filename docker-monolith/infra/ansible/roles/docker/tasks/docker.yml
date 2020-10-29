@@ -1,0 +1,50 @@
+- name: Wait for automatic system updates
+  shell: while sudo fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 1; done;
+  with_items:
+    - lock
+    - lock-frontend
+  tags: install
+
+- name: Install aptitude using apt
+  apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+  tags: install
+
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+  tags: install
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags: install
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  tags: install
+
+- name: Update apt and install docker-ce and other soft
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io' ]
+  tags: install
+
+- name: enable docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  tags: install
+
+- name: add user in group docker
+  user:
+    name: "{{ deploy_user }}"
+    group: docker
+  tags: install
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+  tags: install

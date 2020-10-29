@@ -1,0 +1,7 @@
+---
+- name: Show info about the env this host belong to
+  debug:
+    msg: "This host is in {{ env }} environment!!!"
+
+- include: docker.yml
+- include: reddit.yml

@@ -1,0 +1,6 @@
+output "external_ip_address_docker" {
+  value = yandex_compute_instance.docker.*.network_interface.0.nat_ip_address
+}
+output "name_docker" {
+  value = yandex_compute_instance.docker.*.name
+}
