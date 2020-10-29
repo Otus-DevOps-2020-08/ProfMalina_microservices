@@ -5,14 +5,14 @@ ProfMalina microservices repository
 
 Установка docker docker-compose docker-machine
 
-Сборка образа и отправка егов удалённый репозиторий
+Сборка образа и отправка его в удалённый репозиторий
 
 Подключение к удалённому инстансу при помощи docker-machine и запуск образа
 
 `docker-machine create --driver generic --generic-ip-address=178.154.227.27 --generic-ssh-user yc-user --generic-ssh-key ~/.ssh/id_rsa docker-host`
 `eval $(docker-machine env docker-host)`
 
-Автоматизирвоание поднятие инстанса с запуском образа
+Автоматизация поднятие инстанса с запуском образа
 
 Для переключения на локальный докер
 `eval $(docker-machine env --unset)`
