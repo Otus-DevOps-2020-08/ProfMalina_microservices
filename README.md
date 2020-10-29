@@ -16,3 +16,5 @@ ProfMalina microservices repository
 
 Для переключения на локальный докер
 `eval $(docker-machine env --unset)`
+
+Подключил оповещения travis в slack
