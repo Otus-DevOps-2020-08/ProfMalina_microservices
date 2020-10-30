@@ -1,0 +1,4 @@
+[docker]
+%{ for index, ip in external_ip_address_docker ~}
+${name_docker[index]} ansible_host=${ip}
+%{ endfor ~}

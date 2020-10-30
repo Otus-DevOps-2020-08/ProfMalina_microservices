@@ -1,0 +1,7 @@
+REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
+nginx                      latest              f35646e83998        2 weeks ago         133MB
+ubuntu                     18.04               56def654ec22        4 weeks ago         63.2MB
+express42/otus-homeworks   0.7.1               5b1974537ec5        9 months ago        1.02GB
+hello-world                latest              bf756fb1ae65        10 months ago       13.3kB
+
+Образ содержит в себе информацию о себе и шаблоны, контейнер содержит данные о состоянии, заполенный шаблон конфигурации информацию о новых слоях

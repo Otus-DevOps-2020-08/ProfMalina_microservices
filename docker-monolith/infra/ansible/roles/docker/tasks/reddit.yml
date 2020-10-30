@@ -1,0 +1,9 @@
+---
+- name: Docker run
+  docker_container:
+    name: reddit
+    image: malinovskiyri/otus-reddit:1.0
+    state: started
+    restart: yes
+    ports:
+    - "80:9292"

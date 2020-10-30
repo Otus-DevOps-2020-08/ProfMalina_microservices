@@ -1,0 +1,7 @@
+---
+- name: Install and start reddit in docker
+  hosts: docker
+  become: true
+
+  roles:
+    - docker
