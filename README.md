@@ -1,6 +1,30 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# docker-4
+
+Разобрался с работой сети в Docker
+
+Посмотрел работу net-namespace
+
+Создал сети для back и front, рассмотрел их работу, подключил необходимые контейнеры ко второй сети
+
+Посмотрел как работает bridge в docker
+
+Пример для docker-compose с 32-го слайда не рабочий, сервис comment теряет связь с бд, добавил `environment: - COMMENT_DATABASE_HOST=post_db`
+
+Параметизировал `docker-compose.yml` и внес переменные в `.env`, проверил работоспособность
+
+Базовое имя проекта берётся из названия папки в которой находится docker-compose.yml, можно указать флагом `--project-name NAME`
+
+Пример `docker-compose --project-name NAME up -d`
+
+Очень полезная команда `docker-compose down --remove-orphans`, когда забыл сначала сделать `docker-compose down` и начал редактировать `yml`
+
+Добавил `docker-compose.override.yml`
+
+Вообще для разработки можно было бы заменить в Dockerfile COPY на монтирование папки с файлами, добавив в Dockerignore лишние файлы, тогда можно было бы кодить "на лету", а для прода сделать отдельный файлы с COPY для сбора готовых образов перед деплоем, через env как раз передавать prod или dev для выбора файла сборки `build: context: ./ui dockerfile: $(NAME_ENV).Dockerfile`, я так думаю
+
 # docker-3
 
 Установил hadolint
