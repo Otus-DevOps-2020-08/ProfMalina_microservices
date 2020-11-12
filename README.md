@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Otus-DevOps-2020-08/ProfMalina_microservices.svg?branch=master)](https://travis-ci.com/Otus-DevOps-2020-08/ProfMalina_microservices)
+
 # ProfMalina_microservices
 ProfMalina microservices repository
 
