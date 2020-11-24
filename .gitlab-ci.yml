@@ -12,8 +12,8 @@ branch build:
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
     - cd reddit
-    - apt update
-    - apt install -y python3.7
+    - apt-get update
+    - apt-get install -y python3.6
     - pip3 install --upgrade setuptools
     - pip3 install docker-compose
     - docker-compose up -d
