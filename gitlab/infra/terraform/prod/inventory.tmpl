@@ -1,0 +1,4 @@
+[gitlab]
+%{ for index, ip in external_ip_address_gitlab ~}
+${name_gitlab[index]} ansible_host=${ip}
+%{ endfor ~}
