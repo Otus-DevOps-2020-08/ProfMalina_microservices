@@ -12,7 +12,9 @@ branch build:
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
     - cd reddit
+    - pip install docker-compose
     - docker-compose up -d
+  command: puma
   environment:
     name: branch/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.example.com
