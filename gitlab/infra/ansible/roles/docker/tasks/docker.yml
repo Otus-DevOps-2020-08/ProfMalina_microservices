@@ -28,7 +28,7 @@
 
 - name: Update apt and install docker-ce and other soft
   apt: name={{ item }} state=latest update_cache=yes
-  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io' ]
+  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose' ]
   tags: install
 
 - name: enable docker
