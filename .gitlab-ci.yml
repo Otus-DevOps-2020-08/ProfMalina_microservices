@@ -14,10 +14,10 @@ branch build:
   stage: build
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
-    - docker build -t --docker-privileged reddit ./reddit
+    - docker --docker-privileged build -t  reddit ./reddit
     - docker network create reddit
-    - docker run -d --docker-privileged --network=reddit --network-alias=db mongo:latest
-    - docker run -d --docker-privileged --network=reddit -p 9292:9292 reddit
+    - docker --docker-privileged run -d  --network=reddit --network-alias=db mongo:latest
+    - docker --docker-privileged run -d  --network=reddit -p 9292:9292 reddit
 
   before_script:
     # - docker info
