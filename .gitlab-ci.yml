@@ -7,9 +7,11 @@ stages:
   - stage
   - production
 
-staging:
+stage:
   stage: stage
   when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
   script:
     - echo 'Deploy'
   environment:
