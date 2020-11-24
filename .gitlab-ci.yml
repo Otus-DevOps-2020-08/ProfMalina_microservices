@@ -8,9 +8,9 @@ stages:
   - production
 
 branch build:
-  image: docker:19.03.8-dind
-  services:
-    - docker:19.03.12-dind
+  image: docker:stable
+  # services:
+  #   - docker:19.03.12-dind
   stage: build
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
