@@ -9,15 +9,18 @@ stages:
 
 branch build:
   image: docker:19.03.8-dind
+  services:
+    - docker:19.03.12-dind
   stage: build
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
+    - docker info
     - cd reddit
     # - apt update
     # - apt install -y software-properties-common
     # - add-apt-repository ppa:deadsnakes/ppa
-    - apt update
-    - apt install -y python3.6-dev
+    # - apt update
+    # - apt install -y python3.6-dev
     - pip3 install --upgrade setuptools
     - pip3 install docker-compose
     - docker-compose up -d
