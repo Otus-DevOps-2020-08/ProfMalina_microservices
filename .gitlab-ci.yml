@@ -4,6 +4,26 @@ stages:
   - build
   - test
   - review
+  - stage
+  - production
+
+staging:
+  stage: stage
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: beta
+    url: http://beta.example.com
+
+production:
+  stage: production
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: http://example.com
 
 variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
