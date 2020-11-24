@@ -12,18 +12,24 @@ branch build:
   services:
     - docker:19.03.12-dind
   stage: build
-  script: echo "Build to $CI_ENVIRONMENT_SLUG"
+  script:
+    - echo "Build to $CI_ENVIRONMENT_SLUG"
+    - docker build -t reddit ./reddit
+    - docker network create reddit
+    - docker run -d --network=reddit --network-alias=db mongo:latest
+    - docker run -d --network=reddit -p 9292:9292 reddit
+
   before_script:
-    - docker info
-    - cd reddit
+    # - docker info
+    # - cd reddit
     # - apt update
     # - apt install -y software-properties-common
     # - add-apt-repository ppa:deadsnakes/ppa
     # - apt update
     # - apt install -y python3.6-dev
-    - pip3 install --upgrade setuptools
-    - pip3 install docker-compose
-    - docker-compose up -d
+    # - pip3 install --upgrade setuptools
+    # - pip3 install docker-compose
+    # - docker-compose up -d
   # command: puma
   environment:
     name: branch/$CI_COMMIT_REF_NAME
