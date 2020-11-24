@@ -7,6 +7,9 @@ stages:
   - stage
   - production
 
+variables:
+  DOCKER_HOST: tcp://docker:2375
+
 branch build:
   image: docker:stable
   # services:
@@ -16,8 +19,8 @@ branch build:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker build -t reddit ./reddit
     - docker network create reddit
-    - docker -run -d  --network=reddit --network-alias=db --privileged mongo:latest
-    - docker run -d  --network=reddit -p 9292:9292 --privileged reddit
+    - docker -run -d  --network=reddit --network-alias=db mongo:latest
+    - docker run -d  --network=reddit -p 9292:9292 reddit
 
   before_script:
     # - docker info
