@@ -12,6 +12,7 @@ branch build:
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
     - cd reddit
+    - apt-get install software-properties-common
     - add-apt-repository ppa:deadsnakes/ppa
     - apt-get update
     - apt-get install -y python3.6-dev
