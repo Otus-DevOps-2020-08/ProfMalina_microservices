@@ -7,7 +7,7 @@ stages:
   - stage
   - production
 
-branch build:
+  branch build:
   stage: build
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
