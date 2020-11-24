@@ -13,7 +13,7 @@ branch build:
   before_script:
     - cd reddit
     - apt-get update
-    - apt-get install software-properties-common
+    - apt-get install -y software-properties-common
     - add-apt-repository ppa:deadsnakes/ppa
     - apt-get update
     - apt-get install -y python3.6-dev
