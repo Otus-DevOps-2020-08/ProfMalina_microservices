@@ -12,7 +12,7 @@ branch build:
   script: echo "Build to $CI_ENVIRONMENT_SLUG"
   before_script:
     - cd reddit
-    - apk add py-pip python-dev libffi-dev openssl-dev gcc libc-dev make
+    - apt install python3-pip
     - pip install docker-compose
     - docker-compose up -d
   # command: puma
