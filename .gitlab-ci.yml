@@ -13,7 +13,7 @@ branch build:
   before_script:
     - cd reddit
     - apt update
-    - apt install python3-pip
+    - apt install -y python3-pip
     - pip install docker-compose
     - docker-compose up -d
   # command: puma
