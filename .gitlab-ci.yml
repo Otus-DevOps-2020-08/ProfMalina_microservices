@@ -10,9 +10,9 @@ stages:
 branch build:
   stage: build
   image: docker:19.03.12
-  services:
-    - name: docker:19.03.12-dind
-      alias: docker
+  # services:
+  #   - name: docker:19.03.12-dind
+  #     alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker build -t reddit ./reddit
