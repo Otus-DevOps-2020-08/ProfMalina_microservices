@@ -17,7 +17,7 @@ branch build:
     # - sleep 60
     - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
-    - docker build -v "$MOUNT_POINT:/mnt" -t reddit ./reddit
+    - docker build -t reddit ./reddit
 #   image: docker:stable
 #   # services:
 #   #   - name: docker:19.03.12-dind

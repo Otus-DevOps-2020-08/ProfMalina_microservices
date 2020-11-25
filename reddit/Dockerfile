@@ -7,6 +7,8 @@ WORKDIR $APP_HOME
 ADD Gemfile* $APP_HOME/
 RUN bundle install
 COPY . $APP_HOME
+VOLUME [ "$MOUNT_POINT:/mnt" ]
+
 
 ENV DATABASE_URL db
 
