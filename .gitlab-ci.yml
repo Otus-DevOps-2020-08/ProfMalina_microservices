@@ -11,11 +11,14 @@ branch build:
   variables:
     DOCKER_TLS_CERTDIR: ""
   services:
-    - name: docker:19.03.12-dind
-      alias: docker
+    # - name: docker:19.03.12-dind
+    alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker build -t reddit ./reddit
+    - docker network create reddit
+    - docker run -d --network=reddit --network-alias=db mongo:latest
+    - docker run -d --network=reddit -p 80:9292 reddit
   only:
     - branches
   except:
@@ -24,14 +27,12 @@ branch build:
 branch review:
   stage: review
   image: ruby:2.4.2
-  services:
-    - name: docker:19.03.12-dind
-      alias: docker
+  # services:
+  #   - name: docker:19.03.12-dind
+  #     alias: docker
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
-    - docker network create reddit
-    - docker run -d --network=reddit --network-alias=db mongo:latest
-    - docker run -d --network=reddit -p 80:9292 reddit
+
   environment:
     name: branch/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.178.154.230.184.sslip.io
