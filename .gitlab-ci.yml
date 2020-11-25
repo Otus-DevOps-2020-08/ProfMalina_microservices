@@ -9,7 +9,7 @@ stages:
 
 branch build:
   stage: build
-  image: docker:19.03.12-dind
+  image: docker:19.03.12
   variables:
     # MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
     # DOCKER_DRIVER: overlay2
@@ -27,7 +27,7 @@ branch build:
 
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.example.com
+    url: http://$CI_ENVIRONMENT_SLUG.178.154.229.60.sslip.io
   only:
     - branches
   except:
@@ -39,7 +39,7 @@ branch review:
   script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.example.com
+    url: http://$CI_ENVIRONMENT_SLUG.178.154.229.60.sslip.io
   only:
     - branches
   except:
@@ -54,7 +54,7 @@ branch review:
 #     - echo 'Deploy'
 #   environment:
 #     name: beta
-#     url: http://beta.example.com
+#     url: http://beta.178.154.229.60.sslip.io
 
 # production:
 #   stage: production
@@ -63,7 +63,7 @@ branch review:
 #     - echo 'Deploy'
 #   environment:
 #     name: production
-#     url: http://example.com
+#     url: http://178.154.229.60.sslip.io
 
 # variables:
 #   DATABASE_URL: 'mongodb://mongo/user_posts'
@@ -95,4 +95,4 @@ branch review:
 #     - echo 'Deploy'
 #   environment:
 #     name: dev
-#     url: http://dev.example.com
+#     url: http://dev.178.154.229.60.sslip.io
