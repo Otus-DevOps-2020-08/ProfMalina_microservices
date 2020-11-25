@@ -36,7 +36,7 @@ branch_review:
     # - apk update
     # - apk upgrade
     # - apk add python python-dev py-pip build-base
-    - apk add --no-cache curl jq python3 py3-pip
+    - apk add --no-cache curl jq python3 py3-pip gcc
     - pip install docker-compose
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
