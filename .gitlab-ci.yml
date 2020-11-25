@@ -13,6 +13,7 @@ branch build:
   variables:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   script:
+    - sleep 60
     - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
     - docker build -t reddit ./reddit
@@ -26,6 +27,10 @@ branch build:
     - docker network create reddit
     - docker -run -d  --network=reddit --network-alias=db mongo:latest
     - docker run -d  --network=reddit -p 9292:9292 reddit
+  before_script:
+    - df
+    - cat /etc/resolv.conf
+    - cat /etc/hosts
 
 
 #   before_script:
