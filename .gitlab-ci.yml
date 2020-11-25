@@ -12,12 +12,12 @@ branch build:
   image: docker:stable
   variables:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+    # DOCKER_DRIVER: overlay2
+    # DOCKER_HOST: tcp://docker:2375
+    # DOCKER_TLS_CERTDIR: ""
 
   script:
-    # - sleep 60
+    - sleep 60
     - ls
     - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
