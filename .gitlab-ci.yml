@@ -9,7 +9,7 @@ stages:
 
 branch build:
   stage: build
-  image: docker:19.03.12-dind
+  image: docker:stable
   variables:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
     DOCKER_DRIVER: overlay2
