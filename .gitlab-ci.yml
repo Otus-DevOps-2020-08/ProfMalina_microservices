@@ -38,7 +38,7 @@ branch_review:
     # - apk add --no-cache python python-dev py-pip build-base
     # - apk add --no-cache python-dev py-pip build-base libffi-dev openssl-dev
     # - apk add --no-cache curl jq python3 py3-pip gcc
-    - apk add --update py-pip
+    - apk add --update py3-pip
     - pip install --upgrade setuptools
     - pip install docker-compose
   script:
