@@ -1,5 +1,3 @@
-# image: ruby:2.4.2
-
 stages:
   - build
   - test
@@ -42,54 +40,59 @@ branch review:
   except:
     - master
 
-# staging:
-#   stage: stage
-#   when: manual
-#   only:
-#     - /^\d+\.\d+\.\d+/
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: beta
-#     url: http://beta.178.154.229.60.sslip.io
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: beta
+    url: http://beta.178.154.229.60.sslip.io
 
-# production:
-#   stage: production
-#   when: manual
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: production
-#     url: http://178.154.229.60.sslip.io
+production:
+  stage: production
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: http://178.154.229.60.sslip.io
 
-# variables:
-#   DATABASE_URL: 'mongodb://mongo/user_posts'
+variables:
+  DATABASE_URL: 'mongodb://mongo/user_posts'
 
-# before_script:
-#   - cd reddit
-#   - bundle install
+before_script:
+  - cd reddit
+  - bundle install
 
-# build_job:
-#   stage: build
-#   script:
-#     - echo 'Building'
+build_job:
+  stage: build
+  script:
+    - echo 'Building'
 
-# test_unit_job:
-#   stage: test
-#   services:
-#     - mongo:latest
-#   script:
-#     - ruby simpletest.rb
+test_unit_job:
+  stage: test
+  variables:
+    DATABASE_URL: 'mongodb://mongo/user_posts'
+  services:
+    - mongo:latest
+  before_script:
+    - cd reddit
+    - bundle install
+  script:
+    - ruby simpletest.rb
 
-# test_integration_job:
-#   stage: test
-#   script:
-#     - echo 'Testing 2'
+test_integration_job:
+  stage: test
+  script:
+    - echo 'Testing 2'
 
-# deploy_dev_job:
-#   stage: review
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: dev
-#     url: http://dev.178.154.229.60.sslip.io
+deploy_dev_job:
+  stage: review
+  script:
+    - echo 'Deploy'
+  environment:
+    name: dev
+    url: http://dev.178.154.229.60.sslip.io
