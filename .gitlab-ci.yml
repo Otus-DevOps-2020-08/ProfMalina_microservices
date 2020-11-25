@@ -9,12 +9,15 @@ stages:
 
 branch build:
   stage: build
-  image: docker:dind
+  image: docker:19.03.8
   variables:
     # MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
     # DOCKER_DRIVER: overlay2
     # DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
+  services:
+    - name: docker:19.03.8-dind
+      alias: docker
   # before_script:
   #   - df
   #   - cat /etc/resolv.conf
@@ -25,10 +28,7 @@ branch build:
     # - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
     - docker build -t reddit ./reddit
-#   image: docker:stable
-#   # services:
-#   #   - name: docker:19.03.12-dind
-#   #     alias: docker
+
 #   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
 #     - docker build -t reddit ./reddit
