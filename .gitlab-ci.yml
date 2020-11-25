@@ -7,19 +7,26 @@ stages:
   - stage
   - production
 
-# branch build:
-#   stage: build
+branch build:
+  stage: build
+  variables:
+  MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
+
+  script:
+    - mkdir -p "$MOUNT_POINT"
+    # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
+    - docker build -t reddit ./reddit
 #   # image: docker:19.03.12
 #   image: docker:stable
 #   # services:
 #   #   - name: docker:19.03.12-dind
 #   #     alias: docker
 #   script:
-#     - echo "Build to $CI_ENVIRONMENT_SLUG"
+    - echo "Build to $CI_ENVIRONMENT_SLUG"
 #     - docker build -t reddit ./reddit
 #     - docker network create reddit
-#     - docker -run -d  --network=reddit --network-alias=db mongo:latest
-#     - docker run -d  --network=reddit -p 9292:9292 reddit
+    - docker -run -d  --network=reddit --network-alias=db mongo:latest
+    - docker run -d  --network=reddit -p 9292:9292 reddit
 
 #   before_script:
 #     # - docker info
@@ -33,13 +40,13 @@ stages:
 #     # - pip3 install docker-compose
 #     # - docker-compose up -d
 #   # command: puma
-#   environment:
-#     name: branch/$CI_COMMIT_REF_NAME
-#     url: http://$CI_ENVIRONMENT_SLUG.example.com
-#   only:
-#     - branches
-#   except:
-#     - master
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.example.com
+  only:
+    - branches
+  except:
+    - master
 
 branch review:
   stage: review
