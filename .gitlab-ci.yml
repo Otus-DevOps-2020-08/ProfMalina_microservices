@@ -13,6 +13,9 @@ branch build:
   variables:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
     DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_TLS_CERTDIR: ""
+
   script:
     # - sleep 60
     - mkdir -p "$MOUNT_POINT"
