@@ -10,7 +10,7 @@ branch build:
   # image: docker:19.03.12-dind
   variables:
     DOCKER_TLS_CERTDIR: ""
-  # services:
+  services:
     - name: docker:latest
       alias: docker
   script:
