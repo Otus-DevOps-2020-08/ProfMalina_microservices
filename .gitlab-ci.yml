@@ -11,7 +11,7 @@ branch build:
   variables:
     DOCKER_TLS_CERTDIR: ""
   services:
-    - name: docker:19.03.12
+    - name: docker:dind
       alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
