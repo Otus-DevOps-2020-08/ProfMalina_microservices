@@ -11,8 +11,8 @@ branch build:
   variables:
     DOCKER_TLS_CERTDIR: ""
   # services:
-  #   - name: DockerRunner
-  #     alias: docker
+    - name: docker:latest
+      alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker info
