@@ -15,6 +15,7 @@ branch build:
   #     alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
+    - docker info
     - docker build -t reddit ./reddit
     - docker network create reddit
     - docker run -d --network=reddit --network-alias=db mongo:latest
