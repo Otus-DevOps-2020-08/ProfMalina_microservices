@@ -1,4 +1,4 @@
-image: ruby:2.4.2
+# image: ruby:2.4.2
 
 stages:
   - build
@@ -48,9 +48,9 @@ branch build:
   except:
     - master
 
-
 branch review:
   stage: review
+  image: ruby:2.4.2
   script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
   environment:
     name: branch/$CI_COMMIT_REF_NAME
