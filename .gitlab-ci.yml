@@ -35,9 +35,10 @@ branch_review:
   before_script:
     # - apk update
     # - apk upgrade
-    # - apk add python python-dev py-pip build-base
-    - apk add --no-cache curl jq python3 py3-pip gcc
-    - pip install docker-compose
+    # - apk add --no-cache python python-dev py-pip build-base
+    # - apk add --no-cache python-dev py-pip build-base libffi-dev openssl-dev
+    # - apk add --no-cache curl jq python3 py3-pip gcc
+    - apk add --update py-pip && pip install docker-compose
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     - docker info
