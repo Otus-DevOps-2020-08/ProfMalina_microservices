@@ -22,7 +22,7 @@ branch build:
   script:
     # - sleep 60
     # - ls
-    - mkdir -p "$MOUNT_POINT"
+    # - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
     - docker build -t reddit ./reddit
 #   image: docker:stable
