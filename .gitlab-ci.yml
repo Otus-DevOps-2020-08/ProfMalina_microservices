@@ -12,7 +12,7 @@ branch build:
     DOCKER_TLS_CERTDIR: ""
   services:
     # - name: docker:19.03.12-dind
-    alias: docker
+    - alias: docker
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker build -t reddit ./reddit
