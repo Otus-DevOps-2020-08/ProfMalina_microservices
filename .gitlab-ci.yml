@@ -72,6 +72,7 @@ production:
     name: production
     url: http://example.com
 
+
 variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
 
