@@ -9,14 +9,13 @@ stages:
 
 branch build:
   stage: build
+  image: docker:19.03.12
   variables:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
-
   script:
     - mkdir -p "$MOUNT_POINT"
     # - docker run -v "$MOUNT_POINT:/mnt" my-docker-image
     - docker build -t reddit ./reddit
-#   # image: docker:19.03.12
 #   image: docker:stable
 #   # services:
 #   #   - name: docker:19.03.12-dind
