@@ -22,7 +22,7 @@ branch build:
 
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.178.154.229.60.sslip.io
+    url: http://$CI_ENVIRONMENT_SLUG.178.154.230.184.sslip.io
   only:
     - branches
   except:
@@ -34,7 +34,7 @@ branch review:
   script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.178.154.229.60.sslip.io
+    url: http://$CI_ENVIRONMENT_SLUG.178.154.230.184.sslip.io
   only:
     - branches
   except:
@@ -49,7 +49,7 @@ staging:
     - echo 'Deploy'
   environment:
     name: beta
-    url: http://beta.178.154.229.60.sslip.io
+    url: http://beta.178.154.230.184.sslip.io
 
 production:
   stage: production
@@ -58,7 +58,7 @@ production:
     - echo 'Deploy'
   environment:
     name: production
-    url: http://178.154.229.60.sslip.io
+    url: http://178.154.230.184.sslip.io
 
 build_job:
   stage: build
@@ -89,4 +89,4 @@ deploy_dev_job:
     - echo 'Deploy'
   environment:
     name: dev
-    url: http://dev.178.154.229.60.sslip.io
+    url: http://dev.178.154.230.184.sslip.io
