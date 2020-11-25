@@ -32,6 +32,11 @@ branch_review:
   services:
     - name: docker:dind
       alias: docker
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add python python-dev py-pip build-base
+    - pip install docker-compose
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     - docker info
