@@ -8,7 +8,7 @@ services:
   reddit:
     build:
       context: ./
-      dockerfile: ruby.Dockerfile
+      dockerfile: Dockerfile
     environment:
       - DATABASE_URL=mongo
     ports:
