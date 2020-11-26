@@ -36,7 +36,7 @@ branch_review:
     - apk update
     - apk upgrade
     # - apk add --no-cache python python-dev py-pip build-base
-    - apk add --no-cache python2-dev py-pip build-base libffi-dev openssl-dev
+    - apk add --no-cache python3-dev py-pip build-base libffi-dev openssl-dev
     # - apk add --no-cache curl jq python3 py3-pip gcc
     # - apk add py-pip python-dev libffi-dev openssl-dev gcc libc-dev make
     # - apk add --update py3-pip
