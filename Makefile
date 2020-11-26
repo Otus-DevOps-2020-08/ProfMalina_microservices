@@ -6,3 +6,5 @@ docker-runner:
 	# --docker-privileged
 down:
 	docker stop gitlab-runner && docker rm gitlab-runner
+ssh:
+	ssh -i ~/.ssh/appuser ubuntu@178.154.230.184
