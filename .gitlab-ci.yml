@@ -49,7 +49,9 @@ branch_review:
     # - docker network create reddit
     # - docker run -d --network=reddit --network-alias=db mongo:latest
     # - docker run -d --network=reddit -p 9292:9292 reddit
-    - docker-compose -f ./reddit/docker-compose.yml
+    - ls
+    - ls ./reddit
+    - docker-compose --file ./reddit/docker-compose.yml
   environment:
     name: branch/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.178.154.230.184.sslip.io
