@@ -44,7 +44,7 @@ branch_review:
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     - docker info
-    - docker-compose --file ./reddit/docker-compose.yml up -d
+    - docker-compose --file ./reddit/docker-compose.yml config
     - docker ps
   environment:
     name: branch/$CI_COMMIT_REF_NAME
