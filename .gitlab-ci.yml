@@ -38,9 +38,10 @@ branch_review:
   #   - apk add --no-cache python3-dev py-pip build-base libffi-dev openssl-dev
   #   - pip install docker-compose
   script:
-    - DEPLOY_IP=$(178.154.228.214)
+    # - DEPLOY_IP=$(178.154.228.214)
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
-    - ./gitlab-ci/deploy.sh $DEPLOY_IP
+    # - ./gitlab-ci/deploy.sh $DEPLOY_IP
+    - ./gitlab-ci/deploy.sh
     # - docker info
     # - docker-compose --file ./reddit/docker-compose.yml up -d
     # - docker ps

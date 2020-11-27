@@ -1,5 +1,5 @@
 #!/bin/sh
-deploy_ip = $1
+deploy_ip = 178.154.228.214
 echo $deploy_ip
 ssh ubuntu@$deploy_ip
 pwd
