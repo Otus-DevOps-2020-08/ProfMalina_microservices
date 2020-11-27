@@ -3,6 +3,10 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# monitoring-1
+
+Ссылка на DockerHub https://hub.docker.com/u/malinovskiyri
+
 # gitlab-ci-1
 
 С помощью terraform поднял инстанс
