@@ -17,6 +17,7 @@ branch_build:
   script:
     - echo "Build to $CI_ENVIRONMENT_SLUG"
     - docker build -t malinovskiyri/reddit:1.0 ./reddit
+    - docker images
     - docker network create reddit --driver bridge
     - docker run -d --network=reddit --network-alias=db mongo:latest
     - docker run -d --network=reddit -p 9292:9292 malinovskiyri/reddit:1.0
