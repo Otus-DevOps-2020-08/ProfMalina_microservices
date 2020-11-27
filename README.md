@@ -3,6 +3,16 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# gitlab-ci-1
+
+С помощью terraform поднял инстанс
+
+Создал роли для запуска gitlab in docker, запуск и регистрация gitlab-runner после указания токена в group_vars, ip забирается автоматически из inventory, который автоматически генерится
+
+
+
+
+
 # docker-4
 
 Разобрался с работой сети в Docker
