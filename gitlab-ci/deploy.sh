@@ -5,3 +5,4 @@ pwd
 whoami
 uname -a
 echo test
+echo test2
