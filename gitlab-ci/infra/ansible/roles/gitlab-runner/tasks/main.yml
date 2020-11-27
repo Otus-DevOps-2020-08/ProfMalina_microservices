@@ -3,4 +3,4 @@
   command: docker run -d --name gitlab-runner --restart always -v /srv/gitlab-runner/config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:latest
 
 - name: Run register
-  command: docker exec -it gitlab-runner gitlab-runner register --url http://gitlab.{{ ansible_host }}.sslip.io/ --non-interactive --locked=false --name DockerRunner --executor docker --docker-image docker:dind --registration-token {{ TOKEN }} --tag-list "linux,xenial,ubuntu,docker" --run-untagged
+  command: docker exec -it gitlab-runner gitlab-runner register --url http://gitlab.{{ ansible_host }}.sslip.io/ --non-interactive --locked=false --name DockerRunner --executor docker --docker-image docker:dind --registration-token {{ TOKEN }} --tag-list "linux,xenial,ubuntu,docker" --run-untagged --docker-privileged
