@@ -39,7 +39,7 @@ branch_review:
     - sshpass -e ssh -o StrictHostKeyChecking=no $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER docker-compose -f /home/ubuntu/$CI_ENVIRONMENT_SLUG/docker-compose.yml up -d
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$SSH_DEPLOY_SERVER:9292
+    url: http://$CI_ENVIRONMENT_SLUG.$SSH_DEPLOY_SERVER
   only:
     - branches
   except:
@@ -54,7 +54,7 @@ staging:
     - echo 'Deploy'
   environment:
     name: beta
-    url: http://beta.178.154.228.214.sslip.io
+    url: http://beta.$SSH_DEPLOY_SERVER
 
 production:
   stage: production
@@ -63,7 +63,7 @@ production:
     - echo 'Deploy'
   environment:
     name: production
-    url: http://178.154.228.214.sslip.io
+    url: http://$SSH_DEPLOY_SERVER
 
 build_job:
   stage: build
@@ -94,4 +94,4 @@ deploy_dev_job:
     - echo 'Deploy'
   environment:
     name: dev
-    url: http://dev.178.154.228.214.sslip.io
+    url: http://dev.$SSH_DEPLOY_SERVER
