@@ -7,4 +7,3 @@ down:
 	docker stop gitlab-runner && docker rm gitlab-runner
 ssh:
 	ssh -i ~/.ssh/appuser ubuntu@178.154.228.214
-# 178.154.228.214
