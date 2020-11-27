@@ -11,7 +11,7 @@ branch_build:
   variables:
     DOCKER_TLS_CERTDIR: ""
   services:
-    - name: docker:dind
+    - name: docker:19.03-dind
       alias: docker
   before_script:
     - docker info
