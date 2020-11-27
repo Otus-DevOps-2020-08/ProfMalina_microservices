@@ -32,16 +32,19 @@ branch_review:
   # services:
   #   - name: docker:dind
   #     alias: docker
-  # before_script:
-  #   - apk update
-  #   - apk upgrade
+  before_script:
+    - apk update
+    - apk upgrade
+    - apk add --no-cache rsync sshpass
   #   - apk add --no-cache python3-dev py-pip build-base libffi-dev openssl-dev
   #   - pip install docker-compose
   script:
     # - DEPLOY_IP=$(178.154.228.214)
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     # - ./gitlab-ci/deploy.sh $DEPLOY_IP
-    - ./gitlab-ci/deploy.sh
+    - export SSHPASS=$SSH_DEPLOY_PSWD
+    - rsync --recursive --links --owner --group --times --verbose --no-perms --chmod=D0700,F0700 --rsh="sshpass -e ssh -o StrictHostKeyChecking=no" ./reddit $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER:~/$CI_ENVIRONMENT_SLUG
+    # - ./gitlab-ci/deploy.sh
     # - docker info
     # - docker-compose --file ./reddit/docker-compose.yml up -d
     # - docker ps
