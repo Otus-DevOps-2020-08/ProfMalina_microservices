@@ -41,7 +41,7 @@ branch_review:
   script:
     # - DEPLOY_IP=$(178.154.228.214)
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
-    - ech $CI_COMMIT_REF_NAME
+    - echo $CI_COMMIT_REF_NAME
     # - ./gitlab-ci/deploy.sh $DEPLOY_IP
     - export SSHPASS=$SSH_DEPLOY_PSWD
     - rsync --recursive --links --owner --group --times --verbose --no-perms --chmod=D0700,F0700 --rsh="sshpass -e ssh -o StrictHostKeyChecking=no" ./reddit/* $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER:~/$CI_COMMIT_REF_NAME
