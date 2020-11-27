@@ -4,3 +4,4 @@ ssh -i appuser ubuntu@$ip
 pwd
 whoami
 uname -a
+echo test
