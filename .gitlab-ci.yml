@@ -44,7 +44,7 @@ branch_review:
     # - ./gitlab-ci/deploy.sh $DEPLOY_IP
     - export SSHPASS=$SSH_DEPLOY_PSWD
     - rsync --recursive --links --owner --group --times --verbose --no-perms --chmod=D0700,F0700 --rsh="sshpass -e ssh -o StrictHostKeyChecking=no" ./reddit/* $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER:~/$CI_ENVIRONMENT_SLUG
-    - sshpass -e ssh StrictHostKeyChecking=no $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER dcoker-compose -f ~/$CI_ENVIRONMENT_SLUG/docker-compose.yml up -d
+    - sshpass -e ssh -o StrictHostKeyChecking=no $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER dcoker-compose -f ~/$CI_ENVIRONMENT_SLUG/docker-compose.yml up -d
     # - ./gitlab-ci/deploy.sh
     # - docker info
     # - docker-compose --file ./reddit/docker-compose.yml up -d
