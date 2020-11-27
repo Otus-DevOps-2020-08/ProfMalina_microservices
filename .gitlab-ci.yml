@@ -5,29 +5,24 @@ stages:
   - stage
   - production
 
-# branch_build:
-#   stage: build
-#   variables:
-#     DOCKER_TLS_CERTDIR: ""
-#   services:
-#     - name: docker:dind
-#       alias: docker
-#   before_script:
-#     - apk update
-#     - apk upgrade
-#     - apk add --no-cache python3-dev py-pip build-base libffi-dev openssl-dev
-#     - pip install docker-compose
-#   script:
-#     - echo "Build to $CI_ENVIRONMENT_SLUG"
-#     - docker info
-#     - docker build -t reddit ./reddit
-#     - docker-compose --file ./reddit/docker-compose.yml up -d
-#     - docker ps
-  # only:
-  #   - branches
-  # except:
-  #   - master
-
+branch_build:
+  stage: build
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - name: docker:dind
+      alias: docker
+  before_script:
+    - docker build -t malinovskiyri/reddit:1.0 ./reddit
+    - docker network create reddit --driver bridge
+    - docker run -d --network=reddit --network-alias=db mongo:latest
+    - docker run -d --network=reddit -p 9292:9292 malinovskiyri/reddit:1.0
+  script:
+    - echo "Build to $CI_ENVIRONMENT_SLUG"
+    - docker info
+    - docker build -t reddit ./reddit
+    - docker-compose --file ./reddit/docker-compose.yml up -d
+    - docker ps
 
 branch_review:
   stage: review
@@ -44,7 +39,7 @@ branch_review:
   script:
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     - docker info
-    - docker-compose --file ./reddit/docker-compose.yml config
+    - docker-compose --file ./reddit/docker-compose.yml up -d
     - docker ps
   environment:
     name: branch/$CI_COMMIT_REF_NAME
@@ -54,53 +49,53 @@ branch_review:
   except:
     - master
 
-# staging:
-#   stage: stage
-#   when: manual
-#   only:
-#     - /^\d+\.\d+\.\d+/
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: beta
-#     url: http://beta.178.154.230.184.sslip.io
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: beta
+    url: http://beta.178.154.230.184.sslip.io
 
-# production:
-#   stage: production
-#   when: manual
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: production
-#     url: http://178.154.230.184.sslip.io
+production:
+  stage: production
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: http://178.154.230.184.sslip.io
 
-# build_job:
-#   stage: build
-#   script:
-#     - echo 'Building'
+build_job:
+  stage: build
+  script:
+    - echo 'Building'
 
-# test_unit_job:
-#   stage: test
-#   image: ruby:2.4.2
-#   variables:
-#     DATABASE_URL: 'mongodb://mongo/user_posts'
-#   services:
-#     - mongo:latest
-#   before_script:
-#     - cd reddit
-#     - bundle install
-#   script:
-#     - ruby simpletest.rb
+test_unit_job:
+  stage: test
+  image: ruby:2.4.2
+  variables:
+    DATABASE_URL: 'mongodb://mongo/user_posts'
+  services:
+    - mongo:latest
+  before_script:
+    - cd reddit
+    - bundle install
+  script:
+    - ruby simpletest.rb
 
-# test_integration_job:
-#   stage: test
-#   script:
-#     - echo 'Testing 2'
+test_integration_job:
+  stage: test
+  script:
+    - echo 'Testing 2'
 
-# deploy_dev_job:
-#   stage: review
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: dev
-#     url: http://dev.178.154.230.184.sslip.io
+deploy_dev_job:
+  stage: review
+  script:
+    - echo 'Deploy'
+  environment:
+    name: dev
+    url: http://dev.178.154.230.184.sslip.io
