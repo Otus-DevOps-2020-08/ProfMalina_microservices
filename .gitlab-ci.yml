@@ -5,52 +5,38 @@ stages:
   - stage
   - production
 
-# branch_build:
-#   stage: build
-#   image: docker:19.03
-#   variables:
-#     DOCKER_TLS_CERTDIR: ""
-#   services:
-#     - name: docker:dind
-#       alias: docker
-#   before_script:
-#     - docker info
-#   script:
-#     - echo "Build to $CI_ENVIRONMENT_SLUG"
-#     - docker build -t malinovskiyri/reddit:1.0 ./reddit
-#     - docker images
-#     - docker network create reddit --driver bridge
-#     - docker run -d --network=reddit --network-alias=db mongo:latest
-#     - docker run -d --network=reddit -p 9292:9292 malinovskiyri/reddit:1.0
-#     - docker ps
+branch_build:
+  stage: build
+  image: docker:19.03
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - name: docker:dind
+      alias: docker
+  before_script:
+    - docker info
+  script:
+    - echo "Build to $CI_ENVIRONMENT_SLUG"
+    - docker build -t malinovskiyri/reddit:1.0 ./reddit
+    - docker images
+    - docker network create reddit --driver bridge
+    - docker run -d --network=reddit --network-alias=db mongo:latest
+    - docker run -d --network=reddit -p 9292:9292 malinovskiyri/reddit:1.0
+    - docker ps
 
 branch_review:
   stage: review
-  # image: docker:19.03
-  # variables:
-  #   DOCKER_TLS_CERTDIR: ""
-  # services:
-  #   - name: docker:dind
-  #     alias: docker
   before_script:
     - apk update
     - apk upgrade
     - apk add --no-cache rsync sshpass
-    # - apk add --no-cache python3-dev py-pip build-base libffi-dev openssl-dev
-    # - pip install docker-compose
   script:
-    # - DEPLOY_IP=$(178.154.228.214)
     - echo "Deploy to $CI_ENVIRONMENT_SLUG"
     - echo $CI_COMMIT_REF_NAME
     - echo $CI_COMMIT_SHORT_SHA
-    # - ./gitlab-ci/deploy.sh $DEPLOY_IP
     - export SSHPASS=$SSH_DEPLOY_PSWD
     - rsync --recursive --links --owner --group --times --verbose --no-perms --chmod=D0700,F0700 --rsh="sshpass -e ssh -o StrictHostKeyChecking=no" ./reddit/* $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER:~/$CI_ENVIRONMENT_SLUG
     - sshpass -e ssh -o StrictHostKeyChecking=no $SSH_DEPLOY_USER@$SSH_DEPLOY_SERVER docker-compose -f /home/ubuntu/$CI_ENVIRONMENT_SLUG/docker-compose.yml up -d
-    # - ./gitlab-ci/deploy.sh
-    # - docker info
-    # - docker-compose --file ./docker-compose.yml up -d
-    # - docker ps
   environment:
     name: branch/$CI_COMMIT_REF_NAME
     url: http://$SSH_DEPLOY_SERVER:9292
@@ -59,53 +45,53 @@ branch_review:
   except:
     - master
 
-# staging:
-#   stage: stage
-#   when: manual
-#   only:
-#     - /^\d+\.\d+\.\d+/
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: beta
-#     url: http://beta.178.154.228.214.sslip.io
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: beta
+    url: http://beta.178.154.228.214.sslip.io
 
-# production:
-#   stage: production
-#   when: manual
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: production
-#     url: http://178.154.228.214.sslip.io
+production:
+  stage: production
+  when: manual
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: http://178.154.228.214.sslip.io
 
-# build_job:
-#   stage: build
-#   script:
-#     - echo 'Building'
+build_job:
+  stage: build
+  script:
+    - echo 'Building'
 
-# test_unit_job:
-#   stage: test
-#   image: ruby:2.4.2
-#   variables:
-#     DATABASE_URL: 'mongodb://mongo/user_posts'
-#   services:
-#     - mongo:latest
-#   before_script:
-#     - cd reddit
-#     - bundle install
-#   script:
-#     - ruby simpletest.rb
+test_unit_job:
+  stage: test
+  image: ruby:2.4.2
+  variables:
+    DATABASE_URL: 'mongodb://mongo/user_posts'
+  services:
+    - mongo:latest
+  before_script:
+    - cd reddit
+    - bundle install
+  script:
+    - ruby simpletest.rb
 
-# test_integration_job:
-#   stage: test
-#   script:
-#     - echo 'Testing 2'
+test_integration_job:
+  stage: test
+  script:
+    - echo 'Testing 2'
 
-# deploy_dev_job:
-#   stage: review
-#   script:
-#     - echo 'Deploy'
-#   environment:
-#     name: dev
-#     url: http://dev.178.154.228.214.sslip.io
+deploy_dev_job:
+  stage: review
+  script:
+    - echo 'Deploy'
+  environment:
+    name: dev
+    url: http://dev.178.154.228.214.sslip.io
