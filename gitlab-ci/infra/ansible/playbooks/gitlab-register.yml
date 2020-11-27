@@ -1,8 +1,0 @@
----
-- name: Register Gitlab-runner
-  hosts: gitlab
-
-  tasks:
-    - name: Run register
-      command: docker run -d --name gitlab-runner --restart always -v /srv/gitlab-runner/config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:latest
-      command: docker exec -it gitlab-runner gitlab-runner register --url http://gitlab.{{ ansible_host }}.sslip.io/ --non-interactive --locked=false --name DockerRunner --executor docker --docker-image alpine:latest --registration-token {{ TOKEN }} --tag-list "linux,xenial,ubuntu,docker" --run-untagged
