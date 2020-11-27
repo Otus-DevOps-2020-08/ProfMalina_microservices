@@ -26,12 +26,12 @@ stages:
 
 branch_review:
   stage: review
-  image: docker:19.03
-  variables:
-    DOCKER_TLS_CERTDIR: ""
-  services:
-    - name: docker:dind
-      alias: docker
+  # image: docker:19.03
+  # variables:
+  #   DOCKER_TLS_CERTDIR: ""
+  # services:
+  #   - name: docker:dind
+  #     alias: docker
   # before_script:
   #   - apk update
   #   - apk upgrade
