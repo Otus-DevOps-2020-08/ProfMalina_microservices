@@ -53,7 +53,7 @@ branch_review:
     # - docker ps
   environment:
     name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.178.154.228.214.sslip.io
+    url: http://$SSH_DEPLOY_SERVER:9292
   only:
     - branches
   except:
