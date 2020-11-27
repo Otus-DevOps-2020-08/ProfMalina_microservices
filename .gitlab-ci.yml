@@ -7,7 +7,7 @@ stages:
 
 branch_build:
   stage: build
-  iamge: docker:dind
+  image: docker:dind
   variables:
     DOCKER_TLS_CERTDIR: ""
   services:
