@@ -1,0 +1,2 @@
+my_host: "{{ ansible_host }}"
+TOKEN: QzkL3646Nkp4rV963p3E

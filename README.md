@@ -3,6 +3,20 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# gitlab-ci-1
+
+С помощью terraform поднял инстанс
+
+Создал роли для запуска gitlab in docker, запуск и регистрация gitlab-runner после указания токена в group_vars, ip забирается автоматически из inventory, который автоматически генерится
+
+Создал тестовый проект и выполнил на нём задания
+
+Добавил запуск контейнера с приложением reddit на стадии build
+
+Добавил на стадии review деплой в динамическое окружение
+
+Добавил оповещения в slack, поспамил в канал для дз https://devops-team-otus.slack.com/archives/C01ACRFM56W
+
 # docker-4
 
 Разобрался с работой сети в Docker
