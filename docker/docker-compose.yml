@@ -1,11 +1,14 @@
 version: '3.3'
 services:
-  post_db:
+  mongo:
     image: mongo:${MONGO_TAG}
+    ports:
+      - 27017:27017
     volumes:
-      - post_db:/data/db
+      - mongo:/data/db
     networks:
       - back_net
+
   ui:
     # build: ../src/ui
     image: ${USERNAME}/ui:${UI_VERSION}
@@ -13,23 +16,31 @@ services:
       - ${UI_PORT}:9292/tcp
     networks:
       - front_net
+
   post:
     # build: ../src/post-py
     image: ${USERNAME}/post:${POST_VERSION}
+    environment:
+      - POST_DATABASE_HOST=mongo
     networks:
       - back_net
       - front_net
+    depends_on:
+      - mongo
+
   comment:
     # build: ../src/comment
     image: ${USERNAME}/comment:${COMMENT_VERSION}
     environment:
-      - COMMENT_DATABASE_HOST=post_db
+      - COMMENT_DATABASE_HOST=mongo
     networks:
       - back_net
       - front_net
+    depends_on:
+      - mongo
 
   prometheus:
-    image: ${USERNAME}/prometheus
+    image: ${USERNAME}/prometheus:${PROMETHEUS_VERSION}
     networks:
       - back_net
       - front_net
@@ -37,10 +48,10 @@ services:
     - '9090:9090'
     volumes:
     - prometheus_data:/prometheus
-    command: # Передаем доп параметры в командной строке
+    command:
     - '--config.file=/etc/prometheus/prometheus.yml'
     - '--storage.tsdb.path=/prometheus'
-    - '--storage.tsdb.retention=1d' # Задаем время хранения метрик в 1 день
+    - '--storage.tsdb.retention=1d'
 
   node-exporter:
     image: prom/node-exporter:v0.15.2
@@ -56,8 +67,27 @@ services:
     - '--path.sysfs=/host/sys'
     - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
 
+  mongo-exporter:
+    image: ${USERNAME}/mongo-exporter:${MONGO_EXP_VERSION}
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017
+    networks:
+      - back_net
+    ports:
+      - 9216:9216
+    depends_on:
+      - mongo
+
+  blackbox-exporter:
+    image: ${USERNAME}/blackbox:${blackbox_VERSION}
+    networks:
+      - front_net
+    user: root
+    ports:
+      - 9115:9115
+
 volumes:
-  post_db:
+  mongo:
   prometheus_data:
 
 networks:

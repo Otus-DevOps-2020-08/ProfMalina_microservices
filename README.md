@@ -7,6 +7,14 @@ ProfMalina microservices repository
 
 Ссылка на DockerHub https://hub.docker.com/u/malinovskiyri
 
+Выбрал https://github.com/percona/mongodb_exporter (это форк от dcu, но он обновляется)  и добавил в образ prometheus, а так же в docker-compose, образ собрал к себе в dockerhub из исходников
+
+Подключил Blackbox exporter
+
+Добавил Makefile с основными командами
+
+Протестировал, что всё работает и исправил то что не работало
+
 # gitlab-ci-1
 
 С помощью terraform поднял инстанс
