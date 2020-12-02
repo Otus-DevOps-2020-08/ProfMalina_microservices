@@ -79,7 +79,7 @@ services:
       - mongo
 
   blackbox-exporter:
-    image: ${USERNAME}/blackbox:${blackbox_VERSION}
+    image: ${USERNAME}/blackbox:${BLACKBOX_VERSION}
     networks:
       - front_net
     user: root
