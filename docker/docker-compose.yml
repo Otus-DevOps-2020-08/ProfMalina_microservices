@@ -10,29 +10,43 @@ services:
       - back_net
 
   ui:
-    # build: ../src/ui
     image: ${USERNAME}/ui:${UI_VERSION}
     ports:
-      - ${UI_PORT}:9292/tcp
+      - ${UI_PORT}:9292
     networks:
       - front_net
+    environment:
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.ui
 
   post:
-    # build: ../src/post-py
     image: ${USERNAME}/post:${POST_VERSION}
     environment:
       - POST_DATABASE_HOST=mongo
+      - POST_DATABASE=posts
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
     networks:
       - back_net
       - front_net
+    ports:
+      - "5000:5000"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: service.post
     depends_on:
       - mongo
 
   comment:
-    # build: ../src/comment
     image: ${USERNAME}/comment:${COMMENT_VERSION}
     environment:
       - COMMENT_DATABASE_HOST=mongo
+      - ZIPKIN_ENABLED=${ZIPKIN_ENABLED}
     networks:
       - back_net
       - front_net

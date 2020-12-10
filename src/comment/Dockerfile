@@ -6,7 +6,7 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 ADD Gemfile* $APP_HOME/
-RUN apt-get update -qq && \
+RUN apt-get update -yq && \
     apt-get install -y build-essential && \
     bundle install
 ADD . $APP_HOME
