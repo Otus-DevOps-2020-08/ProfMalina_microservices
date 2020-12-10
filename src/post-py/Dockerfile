@@ -1,7 +1,7 @@
 FROM python:3.6.0-alpine
 
-ADD . /app
 WORKDIR /app
+ADD . /app
 
 RUN apk --no-cache --update add build-base && \
     apk --no-cache --update add gcc && \
