@@ -57,56 +57,56 @@ services:
     depends_on:
       - mongo
 
-  prometheus:
-    image: ${USERNAME}/prometheus:${PROMETHEUS_VERSION}
-    networks:
-      - back_net
-      - front_net
-    ports:
-    - '9090:9090'
-    volumes:
-    - prometheus_data:/prometheus
-    command:
-    - '--config.file=/etc/prometheus/prometheus.yml'
-    - '--storage.tsdb.path=/prometheus'
-    - '--storage.tsdb.retention=1d'
+  # prometheus:
+  #   image: ${USERNAME}/prometheus:${PROMETHEUS_VERSION}
+  #   networks:
+  #     - back_net
+  #     - front_net
+  #   ports:
+  #   - '9090:9090'
+  #   volumes:
+  #   - prometheus_data:/prometheus
+  #   command:
+  #   - '--config.file=/etc/prometheus/prometheus.yml'
+  #   - '--storage.tsdb.path=/prometheus'
+  #   - '--storage.tsdb.retention=1d'
 
-  node-exporter:
-    image: prom/node-exporter:v0.15.2
-    networks:
-      - back_net
-    user: root
-    volumes:
-    - /proc:/host/proc:ro
-    - /sys:/host/sys:ro
-    - /:/rootfs:ro
-    command:
-    - '--path.procfs=/host/proc'
-    - '--path.sysfs=/host/sys'
-    - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
+  # node-exporter:
+  #   image: prom/node-exporter:v0.15.2
+  #   networks:
+  #     - back_net
+  #   user: root
+  #   volumes:
+  #   - /proc:/host/proc:ro
+  #   - /sys:/host/sys:ro
+  #   - /:/rootfs:ro
+  #   command:
+  #   - '--path.procfs=/host/proc'
+  #   - '--path.sysfs=/host/sys'
+  #   - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
 
-  mongo-exporter:
-    image: ${USERNAME}/mongo-exporter:${MONGO_EXP_VERSION}
-    environment:
-      - MONGODB_URI=mongodb://mongo:27017
-    networks:
-      - back_net
-    ports:
-      - 9216:9216
-    depends_on:
-      - mongo
+  # mongo-exporter:
+  #   image: ${USERNAME}/mongo-exporter:${MONGO_EXP_VERSION}
+  #   environment:
+  #     - MONGODB_URI=mongodb://mongo:27017
+  #   networks:
+  #     - back_net
+  #   ports:
+  #     - 9216:9216
+  #   depends_on:
+  #     - mongo
 
-  blackbox-exporter:
-    image: ${USERNAME}/blackbox:${BLACKBOX_VERSION}
-    networks:
-      - front_net
-    user: root
-    ports:
-      - 9115:9115
+  # blackbox-exporter:
+  #   image: ${USERNAME}/blackbox:${BLACKBOX_VERSION}
+  #   networks:
+  #     - front_net
+  #   user: root
+  #   ports:
+  #     - 9115:9115
 
 volumes:
   mongo:
-  prometheus_data:
+  # prometheus_data:
 
 networks:
   front_net:
