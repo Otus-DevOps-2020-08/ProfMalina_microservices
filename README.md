@@ -3,6 +3,24 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# logging-1
+
+Обновил код в дирректори /src и собрал новые образы
+
+Создал docker-хост используя go и драйвер yandex
+
+Создал отдельный compose-файл для системы логирования
+
+Собрал образ Fluentd с необходимым конфигом
+
+Добавил драйвер fluenев для логирования сервисов post и ui
+
+Запустил сервисы и проверил работоспособность, а такжже посмотрел логи через kibana
+
+Добавил фильтры для логов в fluent.conf используя grok шаблоны
+
+Добавил и включил zipkin, изучил трейсы и исправил ошибку в bugged-code
+
 # monitoring-1
 
 Ссылка на DockerHub https://hub.docker.com/u/malinovskiyri
