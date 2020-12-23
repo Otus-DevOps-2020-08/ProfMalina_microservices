@@ -1,0 +1,41 @@
+---
+- name: Provision
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+
+  - name: Create the etcd.service systemd unit file
+    shell:
+      cmd: |
+        yc vpc network create kubernetes-the-hard-way
+
+        yc vpc subnet create --name kubernetes \
+          --description "Subnet for kubernetes" \
+          --folder-id b1gr89qnr9in6sgurknb \
+          --network-name kubernetes-the-hard-way \
+          --zone ru-central1-a \
+          --range 10.240.0.0/24
+
+        yc vpc address create --name kubernetes-the-hard-way --external-ipv4 zone=ru-central1-b --folder-name infra
+
+        for i in 0 1 2; do
+          yc compute instance create \
+            --name controller-${i} \
+            --hostname controller-${i} \
+            --async \
+            --memory=4 \
+            --create-boot-disk image-folder-id=standard-images,image-family=ubuntu-2004-lts,size=50GB  \
+            --network-interface subnet-name=kubernetes,address=10.240.0.1${i},nat-ip-version=ipv4 \
+            --ssh-key ~/.ssh/appuser.pub
+        done
+
+        for i in 0 1 2; do
+          yc compute instance create \
+            --name worker-${i} \
+            --hostname worker-${i} \
+            --async --memory=4 \
+            --create-boot-disk image-folder-id=standard-images,image-family=ubuntu-2004-lts,size=50GB \
+            --network-interface subnet-name=kubernetes,address=10.240.0.2${i},nat-ip-version=ipv4 \
+            --metadata pod-cidr=10.200.${i}.0/24 \
+            --ssh-key ~/.ssh/appuser.pub
+        done

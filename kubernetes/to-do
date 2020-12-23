@@ -1,18 +1,6 @@
 #!/bin/sh
 
-# yc vpc security-group create \
-#   --name kubernetes-the-hard-way-allow-internal \
-#   "--rule" "direction=egress,port=any,protocol=any,v4-cidrs=[10.240.0.0/24]" \
-#   --network-name kubernetes-the-hard-way
-
-# yc vpc security-group create \
-#   --name kubernetes-the-hard-way-allow-external \
-#   "--rule" "direction=ingress,port=22,protocol=tcp,v4-cidrs=[10.240.0.0/24,10.200.0.0/16]" \
-#   "--rule" "direction=ingress,port=6443,protocol=tcp,v4-cidrs=[10.240.0.0/24,10.200.0.0/16]" \
-#   "--rule" "direction=ingress,protocol=icmp,v4-cidrs=[10.240.0.0/24,10.200.0.0/16]" \
-#   --network-name kubernetes-the-hard-way
-
-# Installing the Client Tools
+# Установка необходимых программ
 
 # Linux
 
@@ -20,27 +8,27 @@ wget -q --show-progress --https-only --timestamping https://storage.googleapis.c
 chmod +x cfssl cfssljson
 sudo mv cfssl cfssljson /usr/local/bin/
 
-# Verification
+# Проверка
 cfssl version
 cfssljson --version
 
-# Install jq for parse yc
+# Установка jq для парсинга консольных ответов яндекса
 sudo apt-get install -y jq
 
-# Install kubectl
+# Установка kubectl
 wget https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
-# Verification
+# Проверка
 kubectl version --client
 
-# Provisioning Compute Resources
+# Создание компьютерных ресурсов
 
-# Virtual Private Cloud Network
+# Создание виртуальной сети
 yc vpc network create kubernetes-the-hard-way
 
-# Create the kubernetes subnet in the kubernetes-the-hard-way VPC network
+# Создание подсети
 yc vpc subnet create --name kubernetes \
   --description "Subnet for kubernetes" \
   --folder-id b1gr89qnr9in6sgurknb \
@@ -48,21 +36,10 @@ yc vpc subnet create --name kubernetes \
   --zone ru-central1-a \
   --range 10.240.0.0/24
 
-# yc vpc subnet create --name pods \
-#   --description "Pods subnet for kubernetes" \
-#   --folder-id b1gr89qnr9in6sgurknb \
-#   --network-name kubernetes-the-hard-way \
-#   --zone ru-central1-a \
-#   --range 10.200.0.0/16
-
-# Firewall Rules
-
-# TO-DO
-
-# Kubernetes Public IP Address
+# Резервирование публичного адреса
 yc vpc address create --name kubernetes-the-hard-way --external-ipv4 zone=ru-central1-b --folder-name infra
 
-# Compute Instances
+# Инстансы
 
 # Kubernetes Controllers
 for i in 0 1 2; do
@@ -88,11 +65,9 @@ for i in 0 1 2; do
     --ssh-key ~/.ssh/appuser.pub
 done
 
+# Генерация Сертификатов
+# Центр сертификации
 
-#===================================
-
-# Provisioning a CA and Generating TLS Certificates
-# Certificate Authority
 cat > ca-config.json <<EOF
 {
   "signing": {
@@ -130,7 +105,7 @@ EOF
 
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 
-# Client and Server Certificates
+# Сертификаты клиента и сервера
 
 cat > admin-csr.json <<EOF
 {
@@ -158,7 +133,7 @@ cfssl gencert \
   -profile=kubernetes \
   admin-csr.json | cfssljson -bare admin
 
-# The Kubelet Client Certificates
+# Сертификаты клиента Kubelet
 
 for instance in worker-0 worker-1 worker-2; do
 cat > ${instance}-csr.json <<EOF
@@ -193,7 +168,7 @@ cfssl gencert \
   ${instance}-csr.json | cfssljson -bare ${instance}
 done
 
-# The Controller Manager Client Certificate
+# Сертификат клиента диспетчера контроллеров
 
 cat > kube-controller-manager-csr.json <<EOF
 {
@@ -221,7 +196,7 @@ cfssl gencert \
   -profile=kubernetes \
   kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
 
-# The Kube Proxy Client Certificate
+# Сертификат клиента прокси-сервера Kube
 
 cat > kube-proxy-csr.json <<EOF
 {
@@ -249,7 +224,7 @@ cfssl gencert \
   -profile=kubernetes \
   kube-proxy-csr.json | cfssljson -bare kube-proxy
 
-# The Scheduler Client Certificate
+# Сертификат клиента планировщика
 
 cat > kube-scheduler-csr.json <<EOF
 {
@@ -277,7 +252,7 @@ cfssl gencert \
   -profile=kubernetes \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
-# The Kubernetes API Server Certificate
+# Сертификат сервера API Kubernetes
 
 KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
 
@@ -310,7 +285,7 @@ cfssl gencert \
   -profile=kubernetes \
   kubernetes-csr.json | cfssljson -bare kubernetes
 
-# The Service Account Key Pair
+# Пара ключей служебной учетной записи
 
 cat > service-account-csr.json <<EOF
 {
@@ -338,30 +313,30 @@ cfssl gencert \
   -profile=kubernetes \
   service-account-csr.json | cfssljson -bare service-account
 
-# Distribute the Client and Server Certificates
+# Распространение сертификатов клиента и сервера
 
-# Copy the appropriate certificates and private keys to each worker instance:
+# Копирование соотвтетсвующих сертификатов и ключей ни каждый инстанс worker
 
 for instance in worker-0 worker-1 worker-2; do
   EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
   scp -i ~/.ssh/appuser -o StrictHostKeyChecking=no ca.pem ${instance}-key.pem ${instance}.pem yc-user@${EXTERNAL_IP}:~/
 done
 
-# Copy the appropriate certificates and private keys to each controller instance
+# Копирование соотвтетсвующих сертификатов и ключей ни каждый инстанс controller
 
 for instance in controller-0 controller-1 controller-2; do
   EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
   scp -i ~/.ssh/appuser -o StrictHostKeyChecking=no ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem service-account-key.pem service-account.pem yc-user@${EXTERNAL_IP}:~/
 done
 
-# Generating Kubernetes Configuration Files for Authentication
+# Создание файлов конфигурации Kubernetes для аутентификации
 
-# Kubernetes Public IP Address
+# Публичный IP-адрес Kubernetes
 KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
 
-# The kubelet Kubernetes Configuration File
+# Файл конфигурации kubelet Kubernetes
 
-# Generate a kubeconfig file for each worker node
+# Создание kubeconfig для каждого инстанса worker
 
 for instance in worker-0 worker-1 worker-2; do
   kubectl config set-cluster kubernetes-the-hard-way \
@@ -384,7 +359,7 @@ for instance in worker-0 worker-1 worker-2; do
   kubectl config use-context default --kubeconfig=${instance}.kubeconfig
 done
 
-# The kube-proxy Kubernetes Configuration File
+# Файл конфигурации Kubernetes kube-proxy
 
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=ca.pem \
@@ -405,7 +380,7 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
-# The kube-controller-manager Kubernetes Configuration File
+# Файл конфигурации Kubernetes kube-controller-manager
 
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=ca.pem \
@@ -426,7 +401,7 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
 
-# The kube-scheduler Kubernetes Configuration File
+# Файл конфигурации Kubernetes kube-scheduler
 
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=ca.pem \
@@ -447,7 +422,7 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 
-# The admin Kubernetes Configuration File
+# Файл конфигурации Kubernetes администратора
 
 kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
@@ -468,7 +443,7 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
-# Distribute the Kubernetes Configuration Files
+# Распространение файлов конфигурации Kubernetes
 
 for instance in worker-0 worker-1 worker-2; do
   EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
@@ -480,13 +455,13 @@ for instance in controller-0 controller-1 controller-2; do
   scp -i ~/.ssh/appuser -o StrictHostKeyChecking=no admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig yc-user@${EXTERNAL_IP}:~/
 done
 
-# Generating the Data Encryption Config and Key
+# Создание конфигурации и ключа шифрования данных
 
-# The Encryption Key
+# Ключ шифрования
 
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
-# The Encryption Config File
+# Файл конфигурации шифрования
 
 cat > encryption-config.yaml <<EOF
 kind: EncryptionConfig
@@ -502,37 +477,37 @@ resources:
       - identity: {}
 EOF
 
-# Copy the encryption-config.yaml encryption config file to each controller instance
+# Копирование файла конфигурации шифрования encryption-config.yaml в каждый экземпляр controller
 
 for instance in controller-0 controller-1 controller-2; do
   EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
   scp -i ~/.ssh/appuser -o StrictHostKeyChecking=no encryption-config.yaml yc-user@${EXTERNAL_IP}:~/
 done
 
-#WARNING!!!!!!!!!!!
+# НАстройка controllers производится параллельно
 
+# Команды подключения по ssh
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-1 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-2 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 
+# Загрузка кластера etcd
 
-# Bootstrapping the etcd Cluster
+# Загрузка члена кластера etcd
 
-# Bootstrapping an etcd Cluster Member
-
-# Download the official etcd release binaries from the etcd GitHub project
+# Загрузите бинарные файлы официального выпуска etcd из проекта etcd GitHub
 wget -q --show-progress --https-only --timestamping "https://github.com/etcd-io/etcd/releases/download/v3.4.10/etcd-v3.4.10-linux-amd64.tar.gz"
 
-# Extract and install the etcd server and the etcdctl command line utility
+# Извлеките и установите сервер etcd и утилиту командной строки etcdctl.
 tar -xvf etcd-v3.4.10-linux-amd64.tar.gz
 sudo mv etcd-v3.4.10-linux-amd64/etcd* /usr/local/bin/
 
-# Configure the etcd Server
+# Настроить сервер etcd
 sudo mkdir -p /etc/etcd /var/lib/etcd
 sudo chmod 700 /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 
-# Create the etcd.service systemd unit file
+# Создайте файл модуля systemd etcd.service
 INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
 ETCD_NAME=$(hostname -s)
 
@@ -568,48 +543,54 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Start the etcd Server
+# Запустите сервер etcd, одновременно на всех контроллекрах
 
 sudo systemctl daemon-reload
 sudo systemctl enable etcd
 sudo systemctl start etcd
 
-# Verification
+# Проверка на controller
 sudo ETCDCTL_API=3 etcdctl member list \
   --endpoints=https://127.0.0.1:2379 \
   --cacert=/etc/etcd/ca.pem \
   --cert=/etc/etcd/kubernetes.pem \
   --key=/etc/etcd/kubernetes-key.pem
 
+# Удалённое выполнение команды
+ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"') \
+  "sudo ETCDCTL_API=3 etcdctl member list \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/etcd/ca.pem \
+  --cert=/etc/etcd/kubernetes.pem \
+  --key=/etc/etcd/kubernetes-key.pem"
 
-=========================
-
+# Команды подключения по ssh
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-1 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-2 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 
-# Bootstrapping the Kubernetes Control Plane
+# Загрузка элемента управления Kubernetes
 
-# Provision the Kubernetes Control Plane
+# Предоставление контроля Kubernetes
 sudo mkdir -p /etc/kubernetes/config
 
-# Download and Install the Kubernetes Controller Binaries
+# Загрузка и установка двоичных файлов контроллера Kubernetes
 wget -q --show-progress --https-only --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-apiserver" \
   "https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-controller-manager" \
   "https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-scheduler" \
   "https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kubectl"
 
-# Install the Kubernetes binaries
+# Установка двоичных файлов Kubernetes
 chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
 sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 
-# Configure the Kubernetes API Server
+# Настройте сервер API Kubernetes
 sudo mkdir -p /var/lib/kubernetes/
 
 sudo mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem service-account-key.pem service-account.pem encryption-config.yaml /var/lib/kubernetes/
 
-# Create the kube-apiserver.service systemd unit file
+# Создайте файл модуля kube-apiserver.service systemd
 INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
@@ -654,11 +635,11 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Configure the Kubernetes Controller Manager
-# Move the kube-controller-manager kubeconfig into place
+# Настройка Kubernetes контроллера диспетчера
+# Перемещение Kube-контроллер-диспетчер kubeconfig на место
 sudo mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
 
-# Create the kube-controller-manager.service systemd unit file
+# Создайте файл модуля kube-controller-manager.service systemd
 cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
 Description=Kubernetes Controller Manager
@@ -685,11 +666,11 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Configure the Kubernetes Scheduler
-# Move the kube-scheduler kubeconfig into place
+# Настроить планировщик Kubernetes
+# Переместите kube-scheduler kubeconfig на место
 sudo mv kube-scheduler.kubeconfig /var/lib/kubernetes/
 
-# Create the kube-scheduler.yaml configuration file
+# Создайте файл конфигурации kube-scheduler.yaml
 cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
 apiVersion: kubescheduler.config.k8s.io/v1alpha1
 kind: KubeSchedulerConfiguration
@@ -699,7 +680,7 @@ leaderElection:
   leaderElect: true
 EOF
 
-# Create the kube-scheduler.service systemd unit file
+# Создайте файл модуля systemd kube-scheduler.service
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
 [Unit]
 Description=Kubernetes Scheduler
@@ -716,13 +697,13 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Start the Controller Services
+# Запустите службы контроллера
 sudo systemctl daemon-reload
 sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
-# Enable HTTP Health Checks
-# Install a basic web server to handle HTTP health checks
+# Включить проверку работоспособности по HTTP
+# Установите базовый веб-сервер для обработки проверок состояния по HTTP
 sudo apt-get update
 sudo apt-get install -y nginx
 
@@ -745,18 +726,26 @@ sudo ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/
 sudo systemctl restart nginx
 sudo systemctl enable nginx
 
-# Verification
+# Проверка
 kubectl get componentstatuses --kubeconfig admin.kubeconfig
 
-# Test the nginx HTTP health check proxy
+# Удалённое выполнение команды
+ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"') \
+  "kubectl get componentstatuses --kubeconfig admin.kubeconfig"
+
+# Протестируйте прокси-сервер для проверки состояния HTTP в nginx
 curl -H "Host: kubernetes.default.svc.cluster.local" -i http://127.0.0.1/healthz
+
+# Удалённое выполнение команды
+ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"') \
+  'curl -H "Host: kubernetes.default.svc.cluster.local" -i http://127.0.0.1/healthz'
 
 ===========================================
 
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 
 # Запускается на одном, слушается весь кластер
-# RBAC for Kubelet Authorization
+# RBAC для авторизации Kubelet
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -796,10 +785,7 @@ subjects:
     name: kubernetes
 EOF
 
-========================================
-The Kubernetes Frontend Load Balancer
-
-# The Kubernetes Frontend Load Balancer
+# Балансировщик нагрузки внешнего интерфейса Kubernetes
 
 KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
 
@@ -820,15 +806,24 @@ yc load-balancer network-load-balancer create \
   --target-group target-group-id=$(yc load-balancer target-group get kubernetes-target-pool --format json | jq '.id' | tr -d '"'),healthcheck-tcp-port=80,healthcheck-name=kubernetes \
   --listener name=kubernetes-target-pool,external-ip-version=ipv4,port=6443,external-address=${KUBERNETES_PUBLIC_ADDRESS}
 
-curl --cacert ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+# Вариант для хэлсчека
 
-=========================================
+# --target-group target-group-id=$(yc load-balancer target-group get kubernetes-target-pool --format json | jq '.id' | tr -d '"'),healthcheck-name=http,healthcheck-interval=2s,healthcheck-timeout=1s,healthcheck-unhealthythreshold=2,healthcheck-healthythreshold=2,healthcheck-http-port=80 \
+
+# Проверки
+
+curl --cacert ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+curl --cacert ca.pem -H "Host: kubernetes.default.svc.cluster.local" -i https://${KUBERNETES_PUBLIC_ADDRESS}:6443/healthz
 
 # Bootstrapping the Kubernetes Worker Nodes
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get worker-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get worker-1 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get worker-2 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 
+sudo modprobe br_netfilter
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+sudo echo "br-netfilter" >> /etc/modules-load.d/modules.conf
+sudo sysctl -w net.ipv4.conf.all.rp_filter=0
 # Provisioning a Kubernetes Worker Node
 sudo apt-get update
 sudo apt-get -y install socat conntrack ipset
@@ -856,6 +851,11 @@ sudo mkdir -p \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
   /var/run/kubernetes
+
+# Fix bug DNS
+# Возможно придётся делать руками
+# sudo modprobe br-netfilter
+# sudo echo "br-netfilter" >> /etc/modules-load.d/modules.conf
 
 # Install the worker binaries
 
