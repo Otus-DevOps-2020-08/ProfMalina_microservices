@@ -559,10 +559,10 @@ sudo ETCDCTL_API=3 etcdctl member list \
 # Удалённое выполнение команды
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"') \
   "sudo ETCDCTL_API=3 etcdctl member list \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/etcd/ca.pem \
-  --cert=/etc/etcd/kubernetes.pem \
-  --key=/etc/etcd/kubernetes-key.pem"
+    --endpoints=https://127.0.0.1:2379 \
+    --cacert=/etc/etcd/ca.pem \
+    --cert=/etc/etcd/kubernetes.pem \
+    --key=/etc/etcd/kubernetes-key.pem"
 
 # Команды подключения по ssh
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
@@ -820,10 +820,10 @@ ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance 
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get worker-1 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 ssh -i ~/.ssh/appuser -o StrictHostKeyChecking=no yc-user@$(yc compute instance get worker-2 --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
 
-sudo modprobe br_netfilter
-sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
-sudo echo "br-netfilter" >> /etc/modules-load.d/modules.conf
-sudo sysctl -w net.ipv4.conf.all.rp_filter=0
+# sudo modprobe br_netfilter
+# sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+# sudo echo "br-netfilter" >> /etc/modules-load.d/modules.conf
+# sudo sysctl -w net.ipv4.conf.all.rp_filter=0
 # Provisioning a Kubernetes Worker Node
 sudo apt-get update
 sudo apt-get -y install socat conntrack ipset
@@ -1094,7 +1094,7 @@ kubectl get pods -l k8s-app=kube-dns -n kube-system
 
 # Verification
 
-kubectl run busybox --image=busybox:1.29 --command -- sleep 3600
+kubectl run busybox --image=busybox:1.28 --command -- sleep 3600
 kubectl get pods -l run=busybox
 
 # Retrieve the full name of the busybox pod
