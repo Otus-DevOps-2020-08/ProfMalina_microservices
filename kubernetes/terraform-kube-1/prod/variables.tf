@@ -22,14 +22,11 @@ variable private_key_path {
 }
 variable instsnce_count {
   description = "Count instance"
-  default     = 1
+  default     = 3
 }
 variable access_key {
   description = "Access key bucket account"
 }
 variable secret_key {
   description = "Secret key bucket account"
-}
-variable service_account_key_id {
-  description = "service_account_key_id"
 }

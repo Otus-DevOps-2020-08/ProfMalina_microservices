@@ -3,14 +3,14 @@
 # }
 
 ### The Ansible inventory file
-resource "local_file" "AnsibleInventory" {
-  content = templatefile("inventory.tmpl",
-    {
-      name_controller              = module.controller.name_controller,
-      external_ip_address_controller = module.controller.external_ip_address_controller,
-      name_worker            = module.worker .name_worker,
-      external_ip_address_worker  = module.worker .external_ip_address_worker ,
-    }
-  )
-  filename = "../../ansible/environments/prod/inventory"
-}
+# resource "local_file" "AnsibleInventory" {
+#   content = templatefile("inventory.tmpl",
+#     {
+#       name_controller                = module.controller.name_controller,
+#       external_ip_address_controller = module.controller.external_ip_address_controller,
+#       name_worker                    = module.worker.name_worker,
+#       external_ip_address_worker     = module.worker.external_ip_address_worker,
+#     }
+#   )
+#   filename = "../../ansible/environments/prod/inventory"
+# }

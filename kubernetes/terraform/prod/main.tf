@@ -6,26 +6,12 @@ provider "yandex" {
 }
 module "vpc" {
   source           = "../modules/vpc"
-  public_key_path  = var.public_key_path
-  private_key_path = var.private_key_path
+  # public_key_path  = var.public_key_path
+  # private_key_path = var.private_key_path
 }
-module "controller" {
-  source            = "../modules/controller"
-  public_key_path   = var.public_key_path
-  subnet_id         = module.vpc.redit_subnet
-  private_key_path  = var.private_key_path
-  image_id = var.image_id
-}
-module "worker" {
-  source            = "../modules/worker"
-  public_key_path   = var.public_key_path
-  subnet_id         = module.vpc.redit_subnet
-  private_key_path  = var.private_key_path
-  image_id = var.image_id
-}
-module "lb" {
-  source            = "../modules/lb"
-  subnet_id         = module.vpc.redit_subnet
-  external_ip = module.vpc.addr
-  internal_ip_address_controller = module.controller.internal_ip_address_controller
+module "kuber" {
+  source                   = "../modules/kuber"
+  network_id               = module.vpc.redit_net
+  service_account_key_id = var.service_account_key_id
+  subnet_id                = module.vpc.redit_subnet
 }
