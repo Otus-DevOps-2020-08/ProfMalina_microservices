@@ -3,6 +3,22 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# kubernetes-3
+
+Попробовал тип доступа NodePort
+
+Попробовал тип доступа LoadBalancer
+
+Попробовал тип доступа Ingress
+
+Защитил сервис с помощью TLS
+
+Опишисал создаваемый объект Secret в виде Kubernetes-манифеста
+
+Создал Network Policy для mongo
+
+Создал постоянный volume для mongo
+
 # kubernetes-2
 
 Развернул локально kubernetes используя minikube
