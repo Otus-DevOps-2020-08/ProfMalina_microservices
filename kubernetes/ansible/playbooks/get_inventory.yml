@@ -1,0 +1,27 @@
+---
+- name: inventoty
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+
+  - name: Create inventory
+    shell:
+      cmd: |
+        echo '[controllers]' > ../inventory.ini
+
+        for instance in controller-0 controller-1 controller-2; do
+          EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address'  | tr -d '"')
+          echo $instance 'ansible_host='$EXTERNAL_IP >> ../inventory.ini
+        done
+
+        echo '[workers]' >> ../inventory.ini
+
+        for instance in worker-0 worker-1 worker-2; do
+          EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address'  | tr -d '"')
+          echo $instance 'ansible_host='$EXTERNAL_IP >> ../inventory.ini
+        done
+
+        echo '[kubernetes_public_address]' >> ../inventory.ini
+
+        KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
+        echo 'kubernetes_public_address ansible_host='$KUBERNETES_PUBLIC_ADDRESS >> ../inventory.ini

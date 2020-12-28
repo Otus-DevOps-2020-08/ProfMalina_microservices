@@ -1,0 +1,31 @@
+---
+- name: Create balancer
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+
+  - name: Balancer
+    shell:
+      cmd: |
+        KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
+
+        CONTROLLER_0=$(yc compute instance get controller-0 --format json | jq '.network_interfaces[0].primary_v4_address.address' | tr -d '"')
+        CONTROLLER_1=$(yc compute instance get controller-1 --format json | jq '.network_interfaces[0].primary_v4_address.address' | tr -d '"')
+        CONTROLLER_2=$(yc compute instance get controller-2 --format json | jq '.network_interfaces[0].primary_v4_address.address' | tr -d '"')
+        SUBNET_ID=$(yc vpc subnet get kubernetes --format json | jq '.id' | tr -d '"')
+        yc load-balancer target-group create \
+          --region-id ru-central1 \
+          --name kubernetes-target-pool \
+          --target subnet-id=${SUBNET_ID},address=${CONTROLLER_0} \
+          --target subnet-id=${SUBNET_ID},address=${CONTROLLER_1} \
+          --target subnet-id=${SUBNET_ID},address=${CONTROLLER_2}
+
+        yc load-balancer network-load-balancer create \
+          --region-id ru-central1 \
+          --name kubernetes-forwarding-rule \
+          --target-group target-group-id=$(yc load-balancer target-group get kubernetes-target-pool --format json | jq '.id' | tr -d '"'),healthcheck-name=http,healthcheck-interval=2s,healthcheck-timeout=1s,healthcheck-unhealthythreshold=2,healthcheck-healthythreshold=2,healthcheck-http-port=80 \
+          --listener name=kubernetes-target-pool,external-ip-version=ipv4,port=6443,external-address=${KUBERNETES_PUBLIC_ADDRESS}
+
+# healthcheck-tcp-port=80,healthcheck-name=kubernetes
+#--target-group target-group-id=$(yc load-balancer target-group get kubernetes-target-pool --format json | jq '.id' | tr -d '"'),healthcheck-name=http,healthcheck-interval=2s,healthcheck-timeout=1s,healthcheck-unhealthythreshold=2,healthcheck-healthythreshold=2,healthcheck-http-port=80,healthcheck-http-path=/healthz \

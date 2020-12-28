@@ -1,0 +1,9 @@
+---
+- include: install.yml
+- include: provisioning.yml
+- include: get_inventory.yml
+# - include: cert.yml
+- include: controller.yml
+- include: RBAC.yml
+- include: balancer.yml
+- include: worker.yml
