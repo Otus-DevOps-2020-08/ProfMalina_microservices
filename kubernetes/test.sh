@@ -56,12 +56,7 @@ cat > admin-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -profile=kubernetes \
-    admin-csr.json | cfssljson -bare admin
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
 
 for instance in worker-0 worker-1 worker-2; do
 cat > ${instance}-csr.json <<EOF
@@ -87,13 +82,7 @@ EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_i
 
 INTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.address' | tr -d '"')
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -hostname=${instance},${EXTERNAL_IP},${INTERNAL_IP} \
-    -profile=kubernetes \
-    ${instance}-csr.json | cfssljson -bare ${instance}
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname=${instance},${EXTERNAL_IP},${INTERNAL_IP} -profile=kubernetes ${instance}-csr.json | cfssljson -bare ${instance}
 done
 
 cat > kube-controller-manager-csr.json <<EOF
@@ -115,12 +104,7 @@ cat > kube-controller-manager-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -profile=kubernetes \
-    kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
 
 cat > kube-proxy-csr.json <<EOF
 {
@@ -141,12 +125,7 @@ cat > kube-proxy-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -profile=kubernetes \
-    kube-proxy-csr.json | cfssljson -bare kube-proxy
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
 
 cat > kube-scheduler-csr.json <<EOF
 {
@@ -167,12 +146,7 @@ cat > kube-scheduler-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -profile=kubernetes \
-    kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
 KUBERNETES_PUBLIC_ADDRESS=$(yc vpc address get kubernetes-the-hard-way --format json | jq '.external_ipv4_address.address' | tr -d '"')
 
@@ -197,13 +171,7 @@ cat > kubernetes-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -hostname=10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
-    -profile=kubernetes \
-    kubernetes-csr.json | cfssljson -bare kubernetes
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname=10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
 
 cat > service-account-csr.json <<EOF
 {
@@ -224,12 +192,7 @@ cat > service-account-csr.json <<EOF
 }
 EOF
 
-cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -profile=kubernetes \
-    service-account-csr.json | cfssljson -bare service-account
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
 
 for instance in worker-0 worker-1 worker-2; do
     EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')

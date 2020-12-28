@@ -3,6 +3,24 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# kubernetes-2
+
+Развернул локально kubernetes используя minikube
+
+Развернул кластер на yandex-cloud используя терраформ
+
+Настроил и поднял сервисы локально и в облаке
+
+Подключился к dashboard
+
+# kubernetes-1
+
+Создал конфиги сервисов reddir для kubernetes
+
+Прошел kubernetes-the-hard-way
+
+Попробовал описать его в плэйбуках
+
 # logging-1
 
 Обновил код в дирректори /src и собрал новые образы

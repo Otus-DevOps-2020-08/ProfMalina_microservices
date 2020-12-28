@@ -1089,9 +1089,9 @@ yc vpc route-table list
 kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.7.0.yaml
 
 # List the pods created by the kube-dns deployment
-
 kubectl get pods -l k8s-app=kube-dns -n kube-system
 
+kubectl get all -n kube-system
 # Verification
 
 kubectl run busybox --image=busybox:1.28 --command -- sleep 3600

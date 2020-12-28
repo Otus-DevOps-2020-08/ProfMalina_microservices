@@ -5,9 +5,8 @@
   gather_facts: no
   tasks:
 
-  # - name: Create certs and config
-  #   command: ${PWD}/test.sh chdir=${PWD}/../../the_hard_way/
-  - name: Cleaning Up
+  - name: Create certs and config
+    register: shell_result
     shell:
       cmd: |
         cd ../../the_hard_way
@@ -380,3 +379,6 @@
             EXTERNAL_IP=$(yc compute instance get ${instance} --format json | jq '.network_interfaces[0].primary_v4_address.one_to_one_nat.address' | tr -d '"')
             scp -i ~/.ssh/appuser -o StrictHostKeyChecking=no encryption-config.yaml yc-user@${EXTERNAL_IP}:~/
         done
+
+  - debug:
+      var: shell_result.stdout_lines
