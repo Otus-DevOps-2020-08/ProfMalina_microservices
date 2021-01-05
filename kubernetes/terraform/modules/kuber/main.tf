@@ -60,8 +60,8 @@ resource "yandex_kubernetes_node_group" "my_node_group" {
     nat         = true
 
     resources {
-      memory = 2
-      cores  = 2
+      memory = 8
+      cores  = 4
     }
 
     boot_disk {
@@ -76,7 +76,7 @@ resource "yandex_kubernetes_node_group" "my_node_group" {
 
   scale_policy {
     fixed_scale {
-      size = 1
+      size = 4
     }
   }
 

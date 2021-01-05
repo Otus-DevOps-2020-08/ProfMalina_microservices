@@ -2,3 +2,4 @@ docker-monolith/infra/packer/variables.json
 *.retry
 /venv/
 .env
+hw30.txt

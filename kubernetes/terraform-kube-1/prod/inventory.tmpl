@@ -1,8 +1,0 @@
-[controller]
-%{ for index, ip in external_ip_address_controller ~}
-${name_controller[index]} ansible_host=${ip}
-%{ endfor ~}
-[worker]
-%{ for index, ip in external_ip_address_worker ~}
-${name_worker[index]} ansible_host=${ip}
-%{ endfor ~}
