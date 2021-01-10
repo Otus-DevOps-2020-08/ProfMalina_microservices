@@ -3,3 +3,4 @@ docker-monolith/infra/packer/variables.json
 /venv/
 .env
 hw30.txt
+kubernetes/gitlab-ci
