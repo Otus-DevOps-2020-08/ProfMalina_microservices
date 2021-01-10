@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gitlab
+  # annotations:
+  #   kubernetes.io/ingress.allow-http: "false"
+spec:
+  tls:
+  - hosts:
+      - gitlab-gitlab
+    # secretName: ui-ingress
+    secretName: gitlab-gitlab-tls
+  backend:
+    serviceName: gitlab-webservice-default
+    servicePort: 8080
