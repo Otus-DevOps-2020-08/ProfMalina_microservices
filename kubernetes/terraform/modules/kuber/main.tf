@@ -11,9 +11,8 @@ resource "yandex_kubernetes_cluster" "reddit_cluster_resource_name" {
   network_id = var.network_id
 
   master {
-    version = "1.18"
+    version = "1.15"
     zonal {
-      # zone      = "${yandex_vpc_subnet.subnet_resource_name.zone}"
       subnet_id = var.subnet_id
     }
 
@@ -37,8 +36,9 @@ resource "yandex_kubernetes_cluster" "reddit_cluster_resource_name" {
   #   my_other_key = "my_other_value"
   # }
 
-  release_channel = "RAPID"
-  network_policy_provider = "CALICO"
+  # release_channel = "RAPID"
+  release_channel = "STABLE"
+  # network_policy_provider = "CALICO"
 
   kms_provider {
     key_id = "${yandex_kms_symmetric_key.key-a.id}"
@@ -49,7 +49,7 @@ resource "yandex_kubernetes_node_group" "my_node_group" {
   cluster_id  = "${yandex_kubernetes_cluster.reddit_cluster_resource_name.id}"
   name        = "name"
   description = "description"
-  version     = "1.18"
+  version     = "1.15"
 
   # labels = {
   #   "key" = "value"
@@ -60,8 +60,8 @@ resource "yandex_kubernetes_node_group" "my_node_group" {
     nat         = true
 
     resources {
-      memory = 2
-      cores  = 2
+      memory = 8
+      cores  = 4
     }
 
     boot_disk {
@@ -76,7 +76,7 @@ resource "yandex_kubernetes_node_group" "my_node_group" {
 
   scale_policy {
     fixed_scale {
-      size = 1
+      size = 4
     }
   }
 
