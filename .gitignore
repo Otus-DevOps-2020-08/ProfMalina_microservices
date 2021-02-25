@@ -5,3 +5,4 @@ docker-monolith/infra/packer/variables.json
 hw30.txt
 hw31.txt
 kubernetes/gitlab-ci
+/trash/
