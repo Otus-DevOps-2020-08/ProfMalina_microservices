@@ -3,6 +3,32 @@
 # ProfMalina_microservices
 ProfMalina microservices repository
 
+# kubernetes-5
+
+Развернул prometheus и grafana в kubernetes кластере
+
+Настроил таргеты для сбора метрик
+
+Установил EFK в kubernetes кластере
+
+# kubernetes-4
+
+Установил Helm
+
+Настроил tiller
+
+Создал Chart для OTUS reddit
+
+Опробовал работу с helm2 helm3
+
+Установил с помощью helm gitlab в kubernetes кластер
+
+Настроил CI
+
+Настроил запуск отдельного окружения по коммиту
+
+Добавил тригер для сборки в staging и production при пуше в мастер и прохождения всех тестов
+
 # kubernetes-3
 
 Попробовал тип доступа NodePort

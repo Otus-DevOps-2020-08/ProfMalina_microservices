@@ -3,4 +3,6 @@ docker-monolith/infra/packer/variables.json
 /venv/
 .env
 hw30.txt
+hw31.txt
 kubernetes/gitlab-ci
+/trash/
